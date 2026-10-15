@@ -1,19 +1,23 @@
-const sqlite3 = require("sqlite3");
-const db = new sqlite3.Database("./4_databse/shop.db");
-
-
-// read schema
+const sqlite3 = require("sqlite3").verbose();
 const fs = require("fs");
 const path = require("path");
-path.join(__dirname, "../4_database/schema.sql");
 
-const schema = fs.readFileSync(schemaPath, "utf-8");
+const dbPath = path.join(__dirname, "../4_database/shop.db");
+const schemaPath = path.join(__dirname, "../4_database/schema.sql");
 
-//excute the schema
-db.exec(schema, (err)=> {
-    if(err) {console.error("Error initializing database", err.message);}
-    else {console.log("Congratulations! DB initialized with schema.sql!");}
-});
+const db = new sqlite3.Database(dbPath);
 
-//Exports the db.js so the upper level can use it
+db.initialize = () => {
+    return new Promise((resolve, reject) => {
+        const schema = fs.readFileSync(schemaPath, "utf8");
+
+        db.exec(schema, (err) => {
+            if (err) return reject(err);
+
+            console.log("Database initialized successfully!");
+            resolve();
+        });
+    });
+};
+
 module.exports = db;

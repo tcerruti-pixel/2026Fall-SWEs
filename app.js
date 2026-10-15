@@ -1,13 +1,29 @@
 const express = require("express");
-const orderController = request("./0_request/orderController.js"); //loading 0_request layer
-const orderService = request("../1_business/orderController.js"); //loading 0_request layer
+const orderController = require("./0_request/orderController.js");
+const db = require("./3_config/db.js");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-//start server 
-app.listen(PORT, ()=> {
-    console.log('server running at https://localhost${PORT}')
+app.use(express.json());
+
+app.get("/", (req, res) => {
+    res.json({
+        message: "Shop API is running!",
+        endpoints: ["/orders", "/orders/1"]
+    });
 });
 
-app.get("/orders/:id", orderController.getOrders);
+app.get("/orders", orderController.getAllOrders);
+app.get("/orders/:id", orderController.getOrder);
+
+db.initialize()
+    .then(() => {
+        app.listen(PORT, "0.0.0.0", () => {
+            console.log(`Server running on port ${PORT}`);
+        });
+    })
+    .catch((err) => {
+        console.error("Database initialization failed:", err);
+        process.exit(1);
+    });

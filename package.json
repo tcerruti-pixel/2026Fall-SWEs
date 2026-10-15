@@ -1,4 +1,10 @@
 {
+  "name": "2026fall-swes",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
   "dependencies": {
     "express": "^5.2.1",
     "sqlite3": "^6.0.1"
